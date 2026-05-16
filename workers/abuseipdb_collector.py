@@ -17,10 +17,8 @@ async def fetch_abuseipdb():
 
     try:
         data = response.json()
-    except ValueError as exc:
-        raise RuntimeError(
-            f"AbuseIPDB returned invalid JSON: {response.text!r}"
-        ) from exc
+    except ValueError as e:
+        raise RuntimeError(f"AbuseIPDB returned invalid JSON: {response.text!r}") from e
 
     return data["data"]
 
@@ -30,8 +28,8 @@ async def save_to_db(ips_data):
         for ip_info in ips_data:
             await conn.execute(
                 """
-                INSERT INTO threads
-                (ip_address, abuse_score, country_code, ips, domain, usage_type, total_reports, last_reported)
+                INSERT INTO ip_intel
+                (ip_address, abuse_score, country_code, isp, domain, usage_type, total_reports, last_reported)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     ip_info["ipAddress"],
@@ -44,7 +42,7 @@ async def save_to_db(ips_data):
                     ip_info.get("lastReportedAt"),
                 ),
             )
-            await conn.commit()
+        await conn.commit()
 
 
 async def run():
