@@ -31,16 +31,12 @@ async def save_to_db(ips_data):
             await conn.execute(
                 """
                 INSERT OR IGNORE INTO ips_intel
-                (ip_address, abuse_score, country_code, isp, domain, usage_type, total_reports, last_reported)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                (ip_address, abuse_score, country_code, last_reported)
+                VALUES (?, ?, ?, ?)""",
                 (
                     ip_info["ipAddress"],
                     ip_info["abuseConfidenceScore"],
                     ip_info["countryCode"],
-                    ip_info.get("isp"),
-                    ip_info.get("domain"),
-                    ip_info.get("usageType"),
-                    ip_info["totalReports"],
                     ip_info.get("lastReportedAt"),
                 ),
             )

@@ -5,12 +5,12 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 import asyncio
 from database.db import init_db
-from workers.abuseipdb_collector import save_to_db
+from workers.abuseipdb_collector import save_to_db, fetch_abuseipdb
 from workers.test_data import TEST_IPS
 
 async def main():
     print("Testing with mock data... I have no free tier requests left :(")
-#    await init_db()
+    ips_data = await fetch_abuseipdb()
     await save_to_db(TEST_IPS)
     print("Fake DONE!")
 
