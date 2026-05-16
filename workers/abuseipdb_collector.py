@@ -1,5 +1,5 @@
 from core.config import ABUSEIPDB_KEY, ABUSEIPDB_URL
-from database.db import get_connection
+from database.db import get_connection, init_db
 import httpx
 
 
@@ -24,20 +24,22 @@ async def fetch_abuseipdb():
 
 
 async def save_to_db(ips_data):
+    await init_db()
+
     async with await get_connection() as conn:
         for ip_info in ips_data:
             await conn.execute(
                 """
-                INSERT INTO ip_intel
+                INSERT OR IGNORE INTO ips_intel
                 (ip_address, abuse_score, country_code, isp, domain, usage_type, total_reports, last_reported)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
                 (
                     ip_info["ipAddress"],
                     ip_info["abuseConfidenceScore"],
                     ip_info["countryCode"],
-                    ip_info.get("usageType"),
                     ip_info.get("isp"),
                     ip_info.get("domain"),
+                    ip_info.get("usageType"),
                     ip_info["totalReports"],
                     ip_info.get("lastReportedAt"),
                 ),

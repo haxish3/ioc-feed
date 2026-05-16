@@ -1,4 +1,4 @@
-CREATE TABLE ip_intel (
+CREATE TABLE IF NOT EXISTS ips_intel (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     ip_address TEXT NOT NULL UNIQUE,
     abuse_score INTEGER,
